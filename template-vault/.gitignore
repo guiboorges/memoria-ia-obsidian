@@ -1,0 +1,5 @@
+# Arquivos do Obsidian que mudam a toda hora e não precisam de histórico
+.obsidian/workspace*.json
+.obsidian/cache
+.trash/
+.DS_Store
