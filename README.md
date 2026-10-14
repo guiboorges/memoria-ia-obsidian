@@ -201,3 +201,7 @@ template-vault/   complete example vault (fictional project "Lumen", a booking a
 hooks/            memory.sh and git-autocommit.sh
 prompts/          ready-made prompts for day-to-day use
 ```
+
+## License
+
+[MIT](LICENSE) © 2026 Guilherme Borges
