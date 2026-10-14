@@ -1,0 +1,46 @@
+name: Bug report
+description: The vault, MCP connection, hooks or prompts don't work as described
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting! Check the troubleshooting table in the README first. For questions, use [Discussions](https://github.com/guiboorges/memoria-ia-obsidian/discussions).
+  - type: dropdown
+    id: part
+    attributes:
+      label: Which part?
+      options:
+        - MCP connection (Claude can't reach the vault)
+        - Hooks (memory.sh / git-autocommit.sh)
+        - Template vault
+        - Prompts
+        - Documentation
+    validations:
+      required: true
+  - type: dropdown
+    id: client
+    attributes:
+      label: Which Claude app?
+      options:
+        - Claude Code (terminal)
+        - Claude Desktop
+        - Both
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error messages or logs
+      render: shell
+  - type: input
+    id: env
+    attributes:
+      label: OS and Obsidian version
+      placeholder: e.g. macOS 26.1, Obsidian 1.9
