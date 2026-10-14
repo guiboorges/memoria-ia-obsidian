@@ -1,5 +1,7 @@
 # Long-term memory for AI with Obsidian
 
+[![Release](https://img.shields.io/github/v/release/guiboorges/memoria-ia-obsidian)](https://github.com/guiboorges/memoria-ia-obsidian/releases/latest) [![License: MIT](https://img.shields.io/github/license/guiboorges/memoria-ia-obsidian)](LICENSE)
+
 **How to give Claude a memory that isn't lost between conversations: one Obsidian vault per project, connected to Claude over MCP, with hooks that make the AI keep everything up to date.**
 
 I use this system across several projects at the same time. Here is the complete method, an example vault ready to copy, and the scripts that automate the tedious part.
