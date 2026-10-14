@@ -1,68 +1,68 @@
-# Prompts do dia a dia
+# Day-to-day prompts
 
-Copie e cole no Claude. No **Claude Code** aberto dentro do vault, o `CLAUDE.md` já faz o Claude ler a memória sozinho. No **Claude Desktop** ou no **claude.ai** (com o conector MCP), use o prompt "Começar sessão" para ele ler a memória primeiro.
+Copy and paste them into Claude. In **Claude Code** opened inside the vault, `CLAUDE.md` already makes Claude read the memory on its own. In **Claude Desktop** or on **claude.ai** (with the MCP connector), use the "Start a session" prompt so it reads the memory first.
 
 ---
 
-## 1. Começar sessão
-*(no Claude Desktop / claude.ai; no Claude Code não é preciso)*
+## 1. Start a session
+*(in Claude Desktop / claude.ai; not needed in Claude Code)*
 
 ```text
-Vamos trabalhar no projeto [NOME]. Pelo conector do Obsidian, leia o CLAUDE.md do vault e siga as instruções:
-leia o MASTER-CONTEXT, o STATUS e o MEMORY. Depois diga, numa frase, onde o projeto está, qual é o próximo
-passo e se há algum lembrete com data vencido.
+Let's work on the [NAME] project. Using the Obsidian connector, read the vault's CLAUDE.md and follow its instructions:
+read MASTER-CONTEXT, STATUS and MEMORY. Then tell me, in one sentence, where the project stands, what the next
+step is, and whether any dated reminder is overdue.
 ```
 
-## 2. Preencher o MASTER-CONTEXT de um projeto novo
+## 2. Fill in the MASTER-CONTEXT for a new project
 
 ```text
-Quero criar a memória do projeto [NOME]. Faça uma entrevista curta comigo, uma pergunta de cada vez, para preencher
-o 00 - Contexto/MASTER-CONTEXT.md: quem, o que é, para quem, objetivo dos próximos 3 meses, decisões já tomadas,
-princípios e o que está fora do escopo. No fim, escreva a nota (máximo 2 telas) e crie o STATUS.md com a fase atual
-e os próximos 3 passos.
+I want to create the memory for the [NAME] project. Interview me briefly, one question at a time, to fill in
+00 - Context/MASTER-CONTEXT.md: who, what it is, who it's for, the goal for the next 3 months, decisions already made,
+principles and what's out of scope. At the end, write the note (2 screens at most) and create STATUS.md with the current
+phase and the next 3 steps.
 ```
 
-## 3. Registrar uma decisão
+## 3. Record a decision
 
 ```text
-Decidimos [DECISÃO] porque [MOTIVO]. Crie um ADR novo em 00 - Contexto/Decisoes/ a partir do Templates/Template ADR.md,
-com contexto, alternativas e consequências, e acrescente a linha no índice Decisoes.md. Se esta decisão substitui
-outra, marque a antiga como "substituída" e ligue as duas.
+We decided [DECISION] because [REASON]. Create a new ADR in 00 - Context/Decisions/ from Templates/ADR Template.md,
+with context, alternatives and consequences, and add the line to the Decisions.md index. If this decision replaces
+another one, mark the old one as "superseded" and link the two.
 ```
 
-## 4. Status rápido
+## 4. Quick status
 
 ```text
 status
 ```
-*(o CLAUDE.md já explica o que fazer: ler o STATUS e responder onde estamos, o que falta e os lembretes.)*
+*(CLAUDE.md already explains what to do: read STATUS and answer where we are, what's left and the reminders.)*
 
-## 5. Revisão da semana
+## 5. Weekly review
 
 ```text
-Revisão da semana: leia o STATUS, o MEMORY e as notas alteradas nos últimos 7 dias. Diga o que avançou, o que
-travou e o que deve ser prioridade na próxima semana. Depois atualize o STATUS (seção "Falta fazer") e
-acrescente no MEMORY as lições da semana.
+Weekly review: read STATUS, MEMORY and the notes changed in the last 7 days. Tell me what moved forward, what
+got stuck and what should be the priority next week. Then update STATUS (the "To do" section) and
+add the week's lessons to MEMORY.
 ```
 
-## 6. Fechar a sessão
-*(com os hooks ativos isto acontece sozinho; sem hooks, peça no fim)*
+## 6. Wrap up the session
+*(with the hooks on, this happens on its own; without hooks, ask for it at the end)*
 
 ```text
-Vamos fechar. Atualize o STATUS com o que fizemos hoje, acrescente no MEMORY o que vale lembrar da próxima vez
-e atualize o README das pastas onde mexemos.
+Let's wrap up. Update STATUS with what we did today, add to MEMORY what's worth remembering next time,
+and update the README of the folders we touched.
 ```
 
-## 7. Trazer notas antigas para o vault
+## 7. Bring old notes into the vault
 
 ```text
-Na pasta [PASTA] há notas soltas sobre este projeto. Leia essas notas e distribua o que importa pelas notas certas do vault
-(decisões viram ADRs, termos vão para o Glossário, dúvidas para Questões em Aberto, o resto para a pasta de
-assunto certa). Não apague nada; no fim, me mostre o que foi para onde.
+The [FOLDER] folder has loose notes about this project. Read them and distribute what matters across the right notes in the vault
+(decisions become ADRs, terms go to the Glossary, questions to Open Questions, everything else to the right
+topic folder). Don't delete anything; at the end, show me what went where.
 ```
 
-## 8. Perguntar ao vault
+## 8. Ask the vault
 
 ```text
-O que já decidimos sobre [ASSUNTO] e por quê? Responda só com o que está no vault, citando as notas.
+What have we already decided about [TOPIC], and why? Answer only with what's in the vault, citing the notes.
 ```

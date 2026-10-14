@@ -1,53 +1,53 @@
-# Instruções para o Claude — vault do projeto Lumen
+# Instructions for Claude — Lumen project vault
 
-Este vault é a **memória de longo prazo** do projeto. Você não lembra das sessões anteriores; este vault lembra por você. Trate-o como a fonte da verdade.
+This vault is the project's **long-term memory**. You don't remember previous sessions; this vault remembers for you. Treat it as the source of truth.
 
-## Ao começar uma sessão
+## When starting a session
 
-1. Leia, nesta ordem:
-   - `00 - Contexto/MASTER-CONTEXT.md` — o que é o projeto e o que já foi decidido
-   - `00 - Contexto/STATUS.md` — onde estamos e o que falta
-   - `99 - Memoria Claude/MEMORY.md` — lições e preferências das sessões anteriores
-2. Se o `STATUS.md` tiver **lembretes com data** que já venceram, avise logo no início.
-3. Responda em uma frase onde o projeto está e qual é o próximo passo, antes de começar o trabalho.
+1. Read, in this order:
+   - `00 - Context/MASTER-CONTEXT.md` — what the project is and what has already been decided
+   - `00 - Context/STATUS.md` — where we are and what's left
+   - `99 - Claude Memory/MEMORY.md` — lessons and preferences from previous sessions
+2. If `STATUS.md` has **dated reminders** that are already due, say so right at the start.
+3. Before starting work, answer in one sentence where the project stands and what the next step is.
 
-Para assuntos específicos, comece pelo `README.md` da pasta (é o índice dela) e só depois abra as notas.
+For specific topics, start with the folder's `README.md` (it's the folder's index) and only then open the notes.
 
-## Durante a sessão
+## During the session
 
-- **Decisões não se reabrem sem motivo.** Se algo já está em `00 - Contexto/Decisoes/`, siga a decisão. Se houver um motivo novo para mudar, diga qual é e proponha um ADR que substitua o anterior.
-- **Decisão nova = ADR novo.** Crie `00 - Contexto/Decisoes/ADR-NNNN Título.md` a partir de `Templates/Template ADR.md` e acrescente uma linha no índice `00 - Contexto/Decisoes.md`.
-- **Dúvida que depende de outra pessoa** vai para `00 - Contexto/Questoes em Aberto.md`, não fica perdida na conversa.
-- **Termo novo do projeto** vai para `00 - Contexto/Glossario.md`.
-- Escreva notas curtas e diretas. Uma ideia por nota. Use links `[[Nome da nota]]` entre notas relacionadas.
+- **Decisions aren't reopened without a reason.** If something is already in `00 - Context/Decisions/`, follow the decision. If there's a new reason to change it, say what it is and propose an ADR that supersedes the previous one.
+- **New decision = new ADR.** Create `00 - Context/Decisions/ADR-NNNN Title.md` from `Templates/ADR Template.md` and add a line to the `00 - Context/Decisions.md` index.
+- **A question that depends on someone else** goes to `00 - Context/Open Questions.md` instead of getting lost in the conversation.
+- **A new project term** goes to `00 - Context/Glossary.md`.
+- Write short, direct notes. One idea per note. Use `[[Note name]]` links between related notes.
 
-## Ao terminar (ou quando o hook pedir)
+## When finishing (or when the hook asks)
 
-1. Atualize `00 - Contexto/STATUS.md`: o que foi feito, o que mudou no "falta fazer", lembretes novos.
-2. Acrescente um bullet datado em `99 - Memoria Claude/MEMORY.md` se aprendeu algo que vale para as próximas sessões (uma preferência, um erro a evitar, um atalho).
-3. Se mexeu em notas de uma pasta, atualize o `README.md` dessa pasta (seção "Trabalho feito" ou "Em aberto").
-4. Atualize o campo `ultima_atualizacao` no topo de cada nota que alterou.
+1. Update `00 - Context/STATUS.md`: what was done, what changed in "To do", new reminders.
+2. Add a dated bullet to `99 - Claude Memory/MEMORY.md` if you learned something that matters for future sessions (a preference, a mistake to avoid, a shortcut).
+3. If you touched notes in a folder, update that folder's `README.md` (the "Work done" or "Open items" section).
+4. Update the `last_updated` field at the top of every note you changed.
 
-## Comandos rápidos
+## Quick commands
 
-- **`status`** — leia o STATUS e responda em 5 linhas: fase atual, o que foi feito por último, os próximos 3 passos e os lembretes com data.
-- **`revisão da semana`** — leia o STATUS, o MEMORY e as notas alteradas nos últimos 7 dias; diga o que avançou, o que travou e a prioridade da próxima semana; atualize o STATUS e o MEMORY.
-- **`fechar`** — faça os passos de "Ao terminar" agora.
+- **`status`** — read STATUS and answer in 5 lines: current phase, what was done last, the next 3 steps and the dated reminders.
+- **`weekly review`** — read STATUS, MEMORY and the notes changed in the last 7 days; say what moved forward, what got stuck and next week's priority; update STATUS and MEMORY.
+- **`wrap up`** — do the "When finishing" steps now.
 
-## Formato das notas
+## Note format
 
-Toda nota começa com este cabeçalho (frontmatter):
+Every note starts with this header (frontmatter):
 
 ```yaml
 ---
-tags: [contexto]
-ultima_atualizacao: AAAA-MM-DD
-status: rascunho | escrito | obsoleto
+tags: [context]
+last_updated: YYYY-MM-DD
+status: draft | written | obsolete
 ---
 ```
 
-## O que nunca fazer
+## Never
 
-- Apagar notas. Se algo ficou obsoleto, mude `status: obsoleto` e explique o motivo no topo.
-- Inventar fatos sobre o projeto. Se não está no vault, pergunte.
-- Guardar senhas, tokens ou dados pessoais de clientes no vault.
+- Delete notes. If something became obsolete, set `status: obsolete` and explain why at the top.
+- Make up facts about the project. If it's not in the vault, ask.
+- Store passwords, tokens or customers' personal data in the vault.

@@ -3,7 +3,7 @@
     "Stop": [
       {
         "hooks": [
-          { "type": "command", "command": "bash ~/.claude/hooks/memoria.sh \"$CLAUDE_PROJECT_DIR\"", "timeout": 20 },
+          { "type": "command", "command": "bash ~/.claude/hooks/memory.sh \"$CLAUDE_PROJECT_DIR\"", "timeout": 20 },
           { "type": "command", "command": "bash ~/.claude/hooks/git-autocommit.sh \"$CLAUDE_PROJECT_DIR\"", "timeout": 20 }
         ]
       }

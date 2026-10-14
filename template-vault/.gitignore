@@ -1,4 +1,4 @@
-# Arquivos do Obsidian que mudam a toda hora e não precisam de histórico
+# Obsidian files that change all the time and don't need history
 .obsidian/workspace*.json
 .obsidian/cache
 .trash/

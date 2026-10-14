@@ -1,209 +1,203 @@
-# Memória de longo prazo para IA com Obsidian
+# Long-term memory for AI with Obsidian
 
-**Como dar ao Claude uma memória que não se perde entre conversas: um vault do Obsidian por projeto, ligado ao Claude por MCP, com hooks que obrigam a IA a manter tudo atualizado.**
+**How to give Claude a memory that isn't lost between conversations: one Obsidian vault per project, connected to Claude over MCP, with hooks that make the AI keep everything up to date.**
 
-Eu uso este sistema em vários projetos ao mesmo tempo. Aqui está o método completo, um vault de exemplo pronto para copiar e os scripts que automatizam a parte chata.
+I use this system across several projects at the same time. Here is the complete method, an example vault ready to copy, and the scripts that automate the tedious part.
 
 ---
 
-## O problema
+## The problem
 
-Toda conversa com uma IA começa do zero. Você explica o projeto, as decisões, o que já foi feito… e na semana seguinte explica tudo de novo. Em projetos longos isso custa tempo e gera erros: a IA sugere de novo uma ideia que você já descartou, esquece um termo combinado, refaz trabalho.
+Every conversation with an AI starts from scratch. You explain the project, the decisions, what has already been done… and the following week you explain it all again. On long projects this costs time and causes mistakes: the AI suggests an idea you already rejected, forgets a term you agreed on, redoes work.
 
-## A solução, num desenho
+## The solution, in one diagram
 
 ```mermaid
 flowchart LR
-    Voce([Você]) <--> Claude[Claude<br/>Code / Desktop]
+    You([You]) <--> Claude[Claude<br/>Code / Desktop]
     Claude <-->|MCP| Plugin[Plugin<br/>MCP Connector]
-    Plugin <--> Vault[(Vault do Obsidian<br/>um por projeto)]
-    Vault --- Contexto[00 - Contexto<br/>MASTER-CONTEXT · STATUS<br/>Decisões · Glossário]
-    Vault --- Memoria[99 - Memoria Claude<br/>MEMORY.md]
-    Claude -. fim da sessão .-> Hooks{{Hooks}}
-    Hooks -->|"memória desatualizada?<br/>então atualize"| Claude
-    Hooks -->|commit automático| Git[(Histórico git<br/>do vault)]
+    Plugin <--> Vault[(Obsidian vault<br/>one per project)]
+    Vault --- Context[00 - Context<br/>MASTER-CONTEXT · STATUS<br/>Decisions · Glossary]
+    Vault --- Memory[99 - Claude Memory<br/>MEMORY.md]
+    Claude -. end of session .-> Hooks{{Hooks}}
+    Hooks -->|"memory out of date?<br/>then update it"| Claude
+    Hooks -->|automatic commit| Git[(Vault<br/>git history)]
 ```
 
-1. **Um vault do Obsidian por projeto** guarda o contexto em notas Markdown simples, que você também lê e edita.
-2. **O plugin MCP Connector** deixa o Claude ler, procurar e escrever nessas notas.
-3. **Notas-âncora** com nome fixo dizem ao Claude o que ler primeiro: o que é o projeto, onde estamos e o que já foi decidido.
-4. **Um `CLAUDE.md`** com as regras: o que ler ao começar e o que atualizar ao terminar.
-5. **Dois hooks** no fim de cada sessão: um não deixa o Claude terminar com a memória desatualizada; o outro faz commit do vault no git, guardando o histórico de tudo.
+1. **One Obsidian vault per project** keeps the context in plain Markdown notes that you can also read and edit.
+2. **The MCP Connector plugin** lets Claude read, search and write those notes.
+3. **Anchor notes** with fixed names tell Claude what to read first: what the project is, where we are, and what has already been decided.
+4. **A `CLAUDE.md`** with the rules: what to read when starting and what to update when finishing.
+5. **Two hooks** at the end of every session: one doesn't let Claude finish while the memory is out of date; the other commits the vault to git, keeping the history of everything.
 
-O resultado: você abre uma conversa nova, o Claude lê a memória e responde *"Estamos na fase X, o próximo passo é Y e hoje é dia de falar com Z"*. Sem você explicar nada.
+The result: you open a new conversation, Claude reads the memory and replies *"We're in phase X, the next step is Y, and today is the day to talk to Z"*. Without you explaining anything.
 
 ---
 
-## A estrutura de um vault
+## The structure of a vault
 
 ```text
-Meu Projeto/
-├─ CLAUDE.md                  ← as regras para o Claude
-├─ .claude/settings.json      ← liga os hooks (Claude Code)
-├─ 00 - Contexto/
-│  ├─ README.md               ← hub: índice da pasta + "em aberto" + "trabalho feito"
-│  ├─ MASTER-CONTEXT.md       ← O QUE é o projeto (a nota mais importante)
-│  ├─ STATUS.md               ← ONDE estamos: fase, feito, falta, lembretes com data
-│  ├─ Decisoes.md             ← índice das decisões
-│  ├─ Decisoes/ADR-0001 ….md  ← POR QUE decidimos cada coisa
-│  ├─ Glossario.md            ← os termos do projeto
-│  └─ Questoes em Aberto.md   ← dúvidas que dependem de alguém
-├─ 01 - …/  02 - …/           ← pastas de assunto, cada uma com o seu README (hub)
-├─ 99 - Memoria Claude/
-│  └─ MEMORY.md               ← COMO trabalhar: preferências e lições, com data
-└─ Templates/                 ← modelos de ADR e de reunião
+My Project/
+├─ CLAUDE.md                  ← the rules for Claude
+├─ .claude/settings.json      ← turns on the hooks (Claude Code)
+├─ 00 - Context/
+│  ├─ README.md               ← hub: folder index + "open items" + "work done"
+│  ├─ MASTER-CONTEXT.md       ← WHAT the project is (the most important note)
+│  ├─ STATUS.md               ← WHERE we are: phase, done, to do, dated reminders
+│  ├─ Decisions.md            ← index of decisions
+│  ├─ Decisions/ADR-0001 ….md ← WHY we decided each thing
+│  ├─ Glossary.md             ← the project's terms
+│  └─ Open Questions.md       ← questions that depend on someone else
+├─ 01 - …/  02 - …/           ← topic folders, each with its own README (hub)
+├─ 99 - Claude Memory/
+│  └─ MEMORY.md               ← HOW to work: preferences and lessons, dated
+└─ Templates/                 ← ADR and meeting templates
 ```
 
-| Nota | Responde a | Quem atualiza |
+| Note | Answers | Who updates it |
 |---|---|---|
-| `MASTER-CONTEXT` | O que é o projeto e o que não muda | Você, com o Claude, raramente |
-| `STATUS` | Onde estamos hoje e o que falta | O Claude, no fim de cada sessão |
-| `Decisoes/ADR-…` | Por que fizemos assim | O Claude, quando há uma decisão |
-| `MEMORY` | Como trabalhar comigo neste projeto | O Claude, quando aprende algo |
-| `README` de cada pasta | O que há aqui e o que está em andamento | O Claude, quando mexe na pasta |
+| `MASTER-CONTEXT` | What the project is and what doesn't change | You, with Claude, rarely |
+| `STATUS` | Where we are today and what's left | Claude, at the end of every session |
+| `Decisions/ADR-…` | Why we did it this way | Claude, whenever there's a decision |
+| `MEMORY` | How to work with me on this project | Claude, whenever it learns something |
+| Each folder's `README` | What's in here and what's in progress | Claude, whenever it touches the folder |
 
-👉 Veja tudo preenchido com um projeto de exemplo em [`template-vault/`](template-vault/).
+👉 See everything filled in with an example project in [`template-vault/`](template-vault/).
 
 ---
 
-## Passo a passo
+## Step by step
 
-### 0. O que você precisa
+### 0. What you need
 
-- [Obsidian](https://obsidian.md) 1.7.2 ou mais recente (grátis)
-- [Claude Code](https://claude.com/claude-code) e/ou o [Claude Desktop](https://claude.ai/download)
-- Para os hooks: `git` e `jq` (no Mac: `brew install jq`)
+- [Obsidian](https://obsidian.md) 1.7.2 or later (free)
+- [Claude Code](https://claude.com/claude-code) and/or [Claude Desktop](https://claude.ai/download)
+- For the hooks: `git` and `jq` (on a Mac: `brew install jq`)
 
-### 1. Crie o vault a partir do modelo
+### 1. Create the vault from the template
 
-1. Baixe este repositório (botão verde **Code → Download ZIP**) ou clone com `git clone`.
-2. Copie a pasta `template-vault/` para onde quer guardar os seus vaults e renomeie com o nome do seu projeto. Dica: dentro da pasta do Obsidian no iCloud, para sincronizar com o celular.
-3. No Obsidian, clique em **Open folder as vault** (abrir pasta como vault) e escolha a pasta.
-4. Apague as notas do exemplo "Lumen" ou use-as como referência e vá substituindo.
+1. Download this repository (green **Code → Download ZIP** button) or clone it with `git clone`.
+2. Copy the `template-vault/` folder to wherever you keep your vaults and rename it after your project. Tip: put it inside the Obsidian folder in iCloud to sync it with your phone.
+3. In Obsidian, click **Open folder as vault** and choose the folder.
+4. Delete the notes from the "Lumen" example, or keep them as a reference and replace them as you go.
 
-### 2. Instale o plugin MCP Connector
+### 2. Install the MCP Connector plugin
 
-O [MCP Connector](https://github.com/istefox/obsidian-mcp-connector) roda dentro do Obsidian e expõe o vault ao Claude, com busca semântica feita no próprio computador.
+[MCP Connector](https://github.com/istefox/obsidian-mcp-connector) runs inside Obsidian and exposes the vault to Claude, with semantic search done on your own computer.
 
-1. No Obsidian: **Settings → Community plugins → Browse** (Configurações → Plugins da comunidade → Explorar) e pesquise **"MCP Connector"**. Instale e ative.
-2. Abra **Settings → MCP Connector → Access control**. Há um token chamado **"Default"**: é a chave que o Claude vai usar. **Não compartilhe este token.**
+1. In Obsidian: **Settings → Community plugins → Browse** and search for **"MCP Connector"**. Install and enable it.
+2. Open **Settings → MCP Connector → Access control**. There is a token called **"Default"**: it's the key Claude will use. **Don't share this token.**
 
-> ⚠️ O Obsidian precisa estar **aberto** para o Claude acessar o vault, porque o servidor roda dentro dele.
+> ⚠️ Obsidian must be **open** for Claude to access the vault, because the server runs inside it.
 
-### 3. Ligue o Claude ao vault
+### 3. Connect Claude to the vault
 
-**Claude Code:** na linha do token, clique em **Claude Code**. O plugin copia o comando completo; cole no Terminal. Ele tem este formato:
+**Claude Code:** on the token's row, click **Claude Code**. The plugin copies the full command; paste it into the Terminal. It looks like this:
 
 ```bash
-claude mcp add --transport http --scope user obsidian-meu-projeto http://127.0.0.1:27200/v1/<route-id>/mcp --header "Authorization: Bearer SEU_TOKEN"
+claude mcp add --transport http --scope user obsidian-my-project http://127.0.0.1:27200/v1/<route-id>/mcp --header "Authorization: Bearer YOUR_TOKEN"
 ```
 
-**Claude Desktop:** na linha do token, clique em **.mcpb** e arraste o arquivo para o Claude Desktop. Ele aparece em **Configurações → Extensões**.
+**Claude Desktop:** on the token's row, click **.mcpb** and drag the file into Claude Desktop. It shows up under **Settings → Extensions**.
 
-**Teste:** com o Obsidian aberto, rode
+**Test:** with Obsidian open, run
 
 ```bash
 curl http://127.0.0.1:27200/_obsidian_mcp_broker/health
 ```
 
-e depois peça ao Claude: *"Leia o STATUS do vault e me diga em que fase está o projeto."*
+and then ask Claude: *"Read the vault's STATUS and tell me what phase the project is in."*
 
-### 4. Preencha a memória do seu projeto
+### 4. Fill in your project's memory
 
-Não precisa escrever tudo à mão. Abra o Claude e use o prompt de entrevista (está em [`prompts/`](prompts/README.md)):
+You don't need to write it all by hand. Open Claude and use the interview prompt (it's in [`prompts/`](prompts/README.md)):
 
 ```text
-Quero criar a memória do projeto [NOME]. Faça uma entrevista curta comigo, uma pergunta de cada vez, para preencher
-o 00 - Contexto/MASTER-CONTEXT.md: quem, o que é, para quem, objetivo dos próximos 3 meses, decisões já tomadas,
-princípios e o que está fora do escopo. No fim, escreva a nota (máximo 2 telas) e crie o STATUS.md com a fase atual
-e os próximos 3 passos.
+I want to create the memory for the [NAME] project. Interview me briefly, one question at a time, to fill in
+00 - Context/MASTER-CONTEXT.md: who, what it is, who it's for, the goal for the next 3 months, decisions already made,
+principles and what's out of scope. At the end, write the note (2 screens at most) and create STATUS.md with the current
+phase and the next 3 steps.
 ```
 
-### 5. Ative os hooks (Claude Code)
+### 5. Turn on the hooks (Claude Code)
 
-Os hooks são o que torna o sistema **confiável**: sem eles, a memória depende de você lembrar de pedir para atualizar.
+The hooks are what make the system **reliable**: without them, the memory depends on you remembering to ask for an update.
 
 ```bash
 mkdir -p ~/.claude/hooks
-cp hooks/memoria.sh hooks/git-autocommit.sh ~/.claude/hooks/
+cp hooks/memory.sh hooks/git-autocommit.sh ~/.claude/hooks/
 chmod +x ~/.claude/hooks/*.sh
 ```
 
-O modelo já traz o `.claude/settings.json` que liga os dois hooks ao fim de cada sessão (evento `Stop`), usando a pasta onde você abriu o Claude Code:
+The template already includes the `.claude/settings.json` that attaches both hooks to the end of every session (the `Stop` event), using the folder where you opened Claude Code:
 
 ```json
 {
   "hooks": {
     "Stop": [{ "hooks": [
-      { "type": "command", "command": "bash ~/.claude/hooks/memoria.sh \"$CLAUDE_PROJECT_DIR\"", "timeout": 20 },
+      { "type": "command", "command": "bash ~/.claude/hooks/memory.sh \"$CLAUDE_PROJECT_DIR\"", "timeout": 20 },
       { "type": "command", "command": "bash ~/.claude/hooks/git-autocommit.sh \"$CLAUDE_PROJECT_DIR\"", "timeout": 20 }
     ]}]
   }
 }
 ```
 
-E transforme o vault num repositório git (só local, não precisa publicar):
+Then turn the vault into a git repository (local only, no need to publish it):
 
 ```bash
-cd "/caminho/do/seu/vault" && git init && git add -A && git commit -m "vault inicial"
+cd "/path/to/your/vault" && git init && git add -A && git commit -m "initial vault"
 ```
 
-**O que cada hook faz:**
+**What each hook does:**
 
-- **`memoria.sh`** — no fim da sessão, procura arquivos alterados nos últimos 90 minutos **depois** da última atualização do `STATUS.md` ou do `MEMORY.md`. Se houver, **impede o Claude de terminar** e pede que atualize a memória (e o README das pastas onde mexeu). Se nada mudou, não faz nada. Tem proteção contra ciclos: se o Claude já está continuando por causa do hook, deixa terminar.
-- **`git-autocommit.sh`** — faz um commit de tudo o que mudou no vault, com a data e hora da sessão. Você ganha um histórico completo: dá para ver o que a IA mudou e voltar atrás em qualquer nota.
+- **`memory.sh`** — at the end of the session, looks for files changed in the last 90 minutes **after** the last update to `STATUS.md` or `MEMORY.md`. If there are any, it **stops Claude from finishing** and asks it to update the memory (and the README of the folders it touched). If nothing changed, it does nothing. It has loop protection: if Claude is already continuing because of the hook, it lets it finish.
+- **`git-autocommit.sh`** — commits everything that changed in the vault, with the session's date and time. You get a complete history: you can see what the AI changed and roll back any note.
 
-> **Código fora do vault?** Se o código do projeto está em outra pasta, passe essa pasta como segundo argumento, para o hook também detectar quando o código mudou:
-> `bash ~/.claude/hooks/memoria.sh "/caminho/do/vault" "/caminho/do/codigo"`
+> **Code outside the vault?** If the project's code lives in another folder, pass that folder as a second argument so the hook also detects when the code changed:
+> `bash ~/.claude/hooks/memory.sh "/path/to/vault" "/path/to/code"`
 
-### 6. Use no dia a dia
+### 6. Day-to-day use
 
-| Momento | O que acontece |
+| Moment | What happens |
 |---|---|
-| **Começar** | Abra o Claude Code na pasta do vault (ou use o prompt "Começar sessão" no Desktop). O Claude lê MASTER-CONTEXT → STATUS → MEMORY e diz onde estamos. |
-| **Trabalhar** | Decisão nova vira ADR. Dúvida pendente vai para Questões em Aberto. Termo novo vai para o Glossário. |
-| **Terminar** | O hook confere a memória; o Claude atualiza o STATUS e o MEMORY; o vault leva commit. |
+| **Start** | Open Claude Code in the vault folder (or use the "Start a session" prompt in Desktop). Claude reads MASTER-CONTEXT → STATUS → MEMORY and tells you where we are. |
+| **Work** | A new decision becomes an ADR. A pending question goes to Open Questions. A new term goes to the Glossary. |
+| **Finish** | The hook checks the memory; Claude updates STATUS and MEMORY; the vault gets a commit. |
 
-Comandos rápidos que o `CLAUDE.md` do modelo já entende: **`status`**, **`revisão da semana`** e **`fechar`**. Mais prompts prontos em [`prompts/`](prompts/README.md).
+Quick commands the template's `CLAUDE.md` already understands: **`status`**, **`weekly review`** and **`wrap up`**. More ready-made prompts in [`prompts/`](prompts/README.md).
 
 ---
 
-## Vários projetos
+## Multiple projects
 
-O ponto forte do método aparece quando há vários projetos:
+The method really shines when there are several projects:
 
-- **Um vault por projeto.** Cada projeto tem o seu contexto isolado: o Claude não mistura decisões de um com outro, e você liga só o vault certo a cada conversa.
-- **Um vault "Conhecimento" compartilhado** para o que serve a todos os projetos: referências de design, prompts que funcionam, livros, padrões de código. Organize com uma nota `INDEX.md` por área.
-- **Um vault "Rotina"** (opcional) para metas e revisões pessoais, com as mesmas ideias: um `STATUS` da semana e comandos como `revisão da semana`.
+- **One vault per project.** Each project has its own isolated context: Claude doesn't mix up one project's decisions with another's, and you connect only the right vault to each conversation.
+- **A shared "Knowledge" vault** for whatever serves every project: design references, prompts that work, books, code patterns. Organize it with an `INDEX.md` note per area.
+- **A "Routine" vault** (optional) for personal goals and reviews, with the same ideas: a weekly `STATUS` and commands like `weekly review`.
 
-## Boas práticas
+## Good practices
 
-- **Curto vence longo.** O `MASTER-CONTEXT` deve caber em 1–2 telas. Se crescer demais, divida em notas e deixe links.
-- **Decisões não se reabrem sem motivo.** É a regra que mais economiza tempo: o Claude para de sugerir o que já foi descartado.
-- **Lembretes com data no STATUS.** *"2026-11-03 — perguntar X ao cliente"*: o Claude avisa no dia.
-- **`ultima_atualizacao` no topo de cada nota.** Mostra rapidamente o que está velho.
-- **Nada de segredos no vault.** Senhas e tokens ficam fora das notas; o vault vai para o git e para a nuvem.
+- **Short beats long.** `MASTER-CONTEXT` should fit in 1–2 screens. If it grows too much, split it into notes and leave links.
+- **Decisions aren't reopened without a reason.** This is the rule that saves the most time: Claude stops suggesting what was already rejected.
+- **Dated reminders in STATUS.** *"2026-11-03 — ask the client about X"*: Claude reminds you on the day.
+- **`last_updated` at the top of every note.** Shows at a glance what's stale.
+- **No secrets in the vault.** Passwords and tokens stay out of the notes; the vault goes to git and to the cloud.
 
-## Problemas comuns
+## Troubleshooting
 
-| Sintoma | Causa e solução |
+| Symptom | Cause and fix |
 |---|---|
-| O Claude não encontra o vault / `ECONNREFUSED` | O Obsidian está fechado. Abra o Obsidian com o vault. |
-| `GET /mcp` responde 405 | Normal: o endpoint só aceita POST. Use o teste de `health` acima. |
-| O Claude Desktop não mostra o conector | Feche o Desktop de vez (**Cmd+Q**) e abra de novo; ele só lê a configuração ao iniciar. |
-| O hook não faz nada | Confira se o `jq` está instalado e se o vault tem `00 - Contexto/STATUS.md` e `99 - Memoria Claude/MEMORY.md`. |
-| O hook pede para atualizar sempre | Ele só olha os últimos 90 minutos. Para mudar, defina `MEMORIA_MINUTOS=30` no comando do hook. |
+| Claude can't find the vault / `ECONNREFUSED` | Obsidian is closed. Open Obsidian with the vault. |
+| `GET /mcp` returns 405 | Normal: the endpoint only accepts POST. Use the `health` test above. |
+| Claude Desktop doesn't show the connector | Quit Desktop completely (**Cmd+Q**) and open it again; it only reads its configuration on startup. |
+| The hook does nothing | Check that `jq` is installed and that the vault has `00 - Context/STATUS.md` and `99 - Claude Memory/MEMORY.md`. |
+| The hook always asks for an update | It only looks at the last 90 minutes. To change that, set `MEMORY_MINUTES=30` in the hook command. |
 
-## O que tem neste repositório
+## What's in this repository
 
 ```text
-template-vault/   vault de exemplo completo (projeto fictício "Lumen", um app de reservas)
-hooks/            memoria.sh e git-autocommit.sh
-prompts/          prompts prontos para o dia a dia
+template-vault/   complete example vault (fictional project "Lumen", a booking app)
+hooks/            memory.sh and git-autocommit.sh
+prompts/          ready-made prompts for day-to-day use
 ```
-
----
-
-### In English
-
-**Long-term memory for AI with Obsidian.** A method I use across several projects to give Claude a memory that survives between conversations: one Obsidian vault per project, connected to Claude through the [MCP Connector](https://github.com/istefox/obsidian-mcp-connector) plugin; anchor notes with fixed names (`MASTER-CONTEXT`, `STATUS`, ADR decision records, glossary, `MEMORY`); a `CLAUDE.md` that tells Claude what to read first and what to update last; and two Claude Code `Stop` hooks — one blocks the session from ending while the memory is stale, the other auto-commits the vault to git. Includes a ready-to-copy example vault, the hooks and day-to-day prompts (in Portuguese).
