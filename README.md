@@ -204,6 +204,12 @@ hooks/            memory.sh and git-autocommit.sh
 prompts/          ready-made prompts for day-to-day use
 ```
 
+## Contributing
+
+- **Questions** go to [Q&A](https://github.com/guiboorges/memoria-ia-obsidian/discussions/categories/q-a), and **ideas** go to [Ideas](https://github.com/guiboorges/memoria-ia-obsidian/discussions/categories/ideas).
+- **Bugs** in the hooks or the template go to [Issues](https://github.com/guiboorges/memoria-ia-obsidian/issues/new/choose).
+- **Pull requests are welcome**, especially new prompts and fixes to the docs.
+
 ## License
 
 [MIT](LICENSE) © 2026 Guilherme Borges
